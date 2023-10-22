@@ -1,72 +1,75 @@
+import paramenterManagement from "../utils/utils.mjs";
+import postManagement from "../modules/posts.mjs";
+
 const API_BASE_URL = "https://api.noroff.dev/api/v1";
 
 let postContainer = document.querySelector(".postContainer");
 let updateContainer = document.querySelector(".updateContainer");
 
-let variable = "helo";
-
-function getParameter(paramenter) {
-  let parameters = new URLSearchParams(window.location.search);
-  return parameters.get(paramenter);
+/**
+ * Initialize the functions for the DOM items
+ * @function
+ */
+function initializeFunctionality() {
+  document
+    .getElementById("logout-pst")
+    .addEventListener("click", logout, false);
+  document
+    .getElementById("update-btn")
+    .addEventListener("click", displayUpdate, false);
+  document
+    .getElementById("delete-btn")
+    .addEventListener("click", deletepst, false);
 }
 
-async function getPost() {
-  const response = await fetch(
-    `${API_BASE_URL}/social/posts/` + getParameter("id") + "?_author=true",
-    {
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: "Bearer " + localStorage.token,
-      },
-      method: "GET",
-    }
-  );
-  const resultat = await response.json();
-  return resultat;
-}
-
-async function deletePost() {
-  const response = await fetch(
-    `${API_BASE_URL}/social/posts/` + getParameter("id"),
-    {
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: "Bearer " + localStorage.token,
-      },
-      method: "DELETE",
-    }
-  );
-  window.location.href = "feed.html";
-}
-
-async function updatePost() {
-  const response = await fetch(
-    `${API_BASE_URL}/social/posts/` + getParameter("id"),
-    {
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: "Bearer " + localStorage.token,
-      },
-      method: "PUT",
-      body: JSON.stringify({
-        title: document.getElementById("update-title").value,
-        body: document.getElementById("update-body").value,
-        tags: [document.getElementById("update-tags").value],
-        media:
-          "https://images.unsplash.com/photo-1586985289071-36f62f55ce44?auto=format&fit=crop&q=80&w=3087&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      }),
-    }
-  );
-  console.log(response.json());
-  displayData();
-  updateContainer.innerHTML = "";
-}
-
+/**
+ * The logout function should be moved to utils. This is a temporary function that serves the same
+ * purpose as logout in feed. This is something to improve.
+ * @function
+ */
 function logout() {
   localStorage.clear();
   window.location.href = "index.html";
 }
 
+/**
+ * get the post of the post pressed from feed. Id can be read from URI
+ * @function
+ */
+async function getpst() {
+  updateContainer.innerHTML = "";
+  return postManagement.getPost(paramenterManagement.getParameter("id"));
+}
+
+/**
+ * delete the post of the post pressed from feed. Id can be read from URI
+ * @function. Timeout to wait for api
+ */
+async function deletepst() {
+  postManagement.deletePost(paramenterManagement.getParameter("id"));
+  setTimeout(displayData, 1000);
+}
+
+/**
+ * update the post of the post pressed from feed. The values are read after pressing the function to display them
+ * under called displayUpdate(). Timeout to wait for api
+ * @function
+ */
+async function updatepst() {
+  postManagement.updatePost(
+    paramenterManagement.getParameter("id"),
+    document.getElementById("update-title").value,
+    document.getElementById("update-body").value,
+    document.getElementById("update-tags").value,
+    "https://images.pexels.com/photos/5929944/pexels-photo-5929944.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  );
+  setTimeout(displayData, 1000);
+}
+
+/**
+ * update the post of the post pressed from feed. This displays where you can edit the item
+ * @function
+ */
 async function displayUpdate() {
   updateContainer.innerHTML = `
   <div class="pt-3">
@@ -101,15 +104,22 @@ async function displayUpdate() {
     />
     </div>
   <div class="pt-3"></div>
-        <button class="btn-primary btn" onclick="updatePost()">
+        <button class="btn-primary btn" id="update-final-btn">
           Update
         </button>
   `;
+  document
+    .getElementById("update-final-btn")
+    .addEventListener("click", updatepst);
 }
 
+/**
+ * Display the data from the post you pressed from the feed.
+ * @function
+ */
 async function displayData() {
   postContainer.innerHTML = "Loading..";
-  let post = await getPost();
+  let post = await getpst();
 
   let feedDisplay = [];
   let initialFeed = `<div class="card">
@@ -142,14 +152,12 @@ async function displayData() {
         <div
           class="fs-4"
           style="font-family: FreeMono, monospace; font-weight: 300"
-          onclick="redirectPost(${post.id})"
         >
         ${post.title}
         </div>
         <div
           class="fs-6"
           style="font-family: FreeMono, monospace; font-weight: 300"
-          onclick="redirectPost(${post.id})"
         >
         ${post.body}
         </div>
@@ -158,7 +166,6 @@ async function displayData() {
           alt="txt"
           class="img-fluid"
           style="height: 400px"
-          onclick="redirectPost(${post.id})"
         />
       </div>
       <div class="col-md-2">
@@ -182,4 +189,5 @@ async function displayData() {
   postContainer.innerHTML = feedDisplay;
 }
 
+initializeFunctionality();
 displayData();

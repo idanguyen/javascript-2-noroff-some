@@ -1,5 +1,9 @@
 const API_BASE_URL = "https://api.noroff.dev/api/v1";
 
+/**
+ * Creates a user by checking whether the input gets an OK for creating an account through the API
+ * @function
+ */
 async function createUser() {
   const response = await fetch(`${API_BASE_URL}/social/auth/register`, {
     headers: {

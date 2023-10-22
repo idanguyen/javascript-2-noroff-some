@@ -1,28 +1,51 @@
+import paramenterManagement from "../utils/utils.mjs";
+import postManagement from "../modules/posts.mjs";
+
 const API_BASE_URL = "https://api.noroff.dev/api/v1";
 
 let feedContainer = document.querySelector(".feedContainer");
 let filter = "forest";
 
-function getParameter(paramenter) {
-  let parameters = new URLSearchParams(window.location.search);
-  return parameters.get(paramenter);
+/**
+ * Initialize the functions for the DOM items
+ * @function
+ */
+function initializeFunctionality() {
+  document.getElementById("logout").addEventListener("click", logout, false);
+  document
+    .getElementById("filter-btn")
+    .addEventListener("click", toggleFilter, false);
+  document
+    .getElementById("search-btn")
+    .addEventListener("click", displayFeed, false);
+  document.getElementById("post-btn").addEventListener("click", post, false);
 }
 
+/**
+ * Toggles the filter you want to add tags to your post between two values. Future add custom additoin of
+ * tags
+ * @function
+ */
 function toggleFilter() {
   if (filter.localeCompare("forest") === 0) {
     filter = "ocean";
-    document.getElementById("filter").innerHTML = "ocean";
+    document.getElementById("filter-btn").innerHTML = "ocean";
   } else if (filter.localeCompare("ocean") === 0) {
     filter = "forest";
-    document.getElementById("filter").innerHTML = "forest";
+    document.getElementById("filter-btn").innerHTML = "forest";
   }
 }
 
+/**
+ * Function that displays all posts. Consider moving to modules/post, but because it is more than one I kept it here.
+ * Returns the list of 100 latest posts
+ * @function
+ */
 async function getPosts() {
   try {
     let uri = `${API_BASE_URL}/social/posts?_author=true`;
-    if (getParameter("filter") != null) {
-      uri = uri + "&_tag=" + getParameter("filter");
+    if (paramenterManagement.getParameter("filter") != null) {
+      uri = uri + "&_tag=" + paramenterManagement.getParameter("filter");
     }
     const response = await fetch(uri, {
       headers: {
@@ -38,37 +61,45 @@ async function getPosts() {
   }
 }
 
-async function postPost() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/social/posts`, {
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: "Bearer " + localStorage.token,
-      },
-      method: "POST",
-      body: JSON.stringify({
-        title: document.getElementById("title-post").value, // Required
-        body: document.getElementById("body-post").value, // Optional
-        tags: [filter], // Optional
-        media:
-          "https://cdn.pixabay.com/photo/2023/09/18/20/01/woman-8261342_1280.jpg", // Optional
-      }),
-    });
-    displayFeed();
-  } catch (error) {
-    alert(error);
-  }
+/**
+ * Post a post with a title, body and tag chosen from the container.
+ * @function
+ */
+async function post() {
+  postManagement.postPost(
+    document.getElementById("title-post").value,
+    document.getElementById("body-post").value,
+    filter,
+    "https://cdn.pixabay.com/photo/2023/09/18/20/01/woman-8261342_1280.jpg"
+  );
+  getPosts();
+  setTimeout(displayFeed, 2000);
 }
 
+/**
+ * Redirect to the specific post where you can delete or update it
+ * @function
+ * @param {string} id - The id of the post.
+ */
 function redirectPost(id) {
   window.location.href = "post.html?id=" + id;
 }
 
+/**
+ * Logs the user out and clears the localstorage so you cant return by using the arrow keys in browser.
+ * @function
+ */
 function logout() {
   localStorage.clear();
   window.location.href = "index.html";
 }
 
+/**
+ * If a search value is added, you get a reduced list of items where
+ * first the title is checked and added with search term.
+ * Then more posts where the search term in the body is added.
+ * @function
+ */
 async function returnSearch() {
   let filteredItems = [];
   let searchFilter = document.getElementById("search-q").value;
@@ -91,6 +122,10 @@ async function returnSearch() {
   return filteredItems;
 }
 
+/**
+ * Displays the feed in the feed container
+ * @function
+ */
 async function displayFeed() {
   feedContainer.innerHTML = "Loading..";
   let feedItems = await getPosts();
@@ -132,15 +167,13 @@ async function displayFeed() {
         <div
           class="fs-4"
           style="font-family: FreeMono, monospace; font-weight: 300"
-          onclick="redirectPost(${items[i].id})"
-        >
+          id="body-${items[i].id}"        >
         ${items[i].title}
         </div>
         <div
           class="fs-6"
           style="font-family: FreeMono, monospace; font-weight: 300"
-          onclick="redirectPost(${items[i].id})"
-        >
+          id="body-${items[i].id}"        >
         ${items[i].body}
         </div>
         <img
@@ -148,8 +181,7 @@ async function displayFeed() {
           alt="txt"
           class="img-fluid"
           style="height: 400px"
-          onclick="redirectPost(${items[i].id})"
-        />
+          id="image-${items[i].id}"        />
       </div>
       <div class="col-md-2">
         <div
@@ -171,6 +203,7 @@ async function displayFeed() {
     }
     feedDisplay.push(finalFeed);
     feedContainer.innerHTML = feedDisplay;
+    addEventListersRedirect(items);
   } else {
     for (let i = 0; i < feedItems.length; i++) {
       feedDisplay.push(`
@@ -194,14 +227,16 @@ async function displayFeed() {
         <div
           class="fs-4"
           style="font-family: FreeMono, monospace; font-weight: 300"
-          onclick="redirectPost(${feedItems[i].id})"
+          id="title-${feedItems[i].id}"
+
         >
         ${feedItems[i].title}
         </div>
         <div
           class="fs-6"
           style="font-family: FreeMono, monospace; font-weight: 300"
-          onclick="redirectPost(${feedItems[i].id})"
+          id="body-${feedItems[i].id}"
+
         >
         ${feedItems[i].body}
         </div>
@@ -210,7 +245,7 @@ async function displayFeed() {
           alt="txt"
           class="img-fluid"
           style="height: 400px"
-          onclick="redirectPost(${feedItems[i].id})"
+          id="image-${feedItems[i].id}"
         />
       </div>
       <div class="col-md-2">
@@ -233,6 +268,34 @@ async function displayFeed() {
     }
     feedDisplay.push(finalFeed);
     feedContainer.innerHTML = feedDisplay;
+    addEventListersRedirect(feedItems);
   }
 }
+
+/**
+ * Add eventlisteners to the items in the feed.
+ * @function
+ * @param {Array} items - The items in the feed that require redirect events.
+ */
+function addEventListersRedirect(items) {
+  for (let i = 0; i < items.length; i++) {
+    document
+      .getElementById("title-" + items[i].id)
+      .addEventListener("click", function () {
+        redirectPost(items[i].id);
+      });
+    document
+      .getElementById("body-" + items[i].id)
+      .addEventListener("click", function () {
+        redirectPost(items[i].id);
+      });
+    document
+      .getElementById("image-" + items[i].id)
+      .addEventListener("click", function () {
+        redirectPost(items[i].id);
+      });
+  }
+}
+
+initializeFunctionality();
 displayFeed();

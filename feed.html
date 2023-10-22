@@ -30,9 +30,7 @@
           <a class="nav-item nav-link bg-dark text-light" href="feed.html"
             >Home</a
           >
-          <span class="nav-item nav-link cursor-hand" onclick="logout()"
-            >Log out</span
-          >
+          <span class="nav-item nav-link cursor-hand" id="logout">Log out</span>
         </div>
       </div>
     </nav>
@@ -67,17 +65,16 @@ Enter your message...</textarea
                   <div class="row-md-2">
                     <button
                       class="btn btn-small btn-primary float-end"
-                      onclick="postPost()"
+                      id="post-btn"
                     >
                       Share
                     </button>
                     <div class="row-md-2"></div>
                     <button
                       class="btn btn-small btn-secondary float-end"
-                      id="filter"
-                      onclick="toggleFilter()"
+                      id="filter-btn"
                     >
-                      Forest
+                      forest
                     </button>
                   </div>
                 </div>
@@ -118,13 +115,7 @@ Enter your message...</textarea
                   aria-label="Sizing example input"
                   aria-describedby="inputGroup-sizing-default"
                 />
-                <button
-                  class="btn-dark"
-                  id="search-btn"
-                  onclick="displayFeed()"
-                >
-                  Search Posts
-                </button>
+                <button class="btn-dark" id="search-btn">Search Posts</button>
               </div>
             </div>
           </div>
@@ -135,6 +126,6 @@ Enter your message...</textarea
         </section>
       </div>
     </main>
-    <script src="js/feed.js"></script>
+    <script type="module" src="js/feed.js"></script>
   </body>
 </html>
