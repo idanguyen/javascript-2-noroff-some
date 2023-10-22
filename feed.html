@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="src/scss/main.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js"
+      integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT"
+      crossorigin="anonymous"
+    ></script>
+    <title>Home | SoMe</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link bg-dark text-light" href="feed.html"
+            >Home</a
+          >
+          <span class="nav-item nav-link cursor-hand" id="logout">Log out</span>
+        </div>
+      </div>
+    </nav>
+    <main>
+      <div class="container">
+        <section>
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-1">
+                  <img
+                    class="rounded-circle shadow-4-strong mb-2"
+                    style="width: 70px; height: 70px"
+                  />
+                </div>
+                <div class="col-md-11">
+                  <div class="row-md-12">
+                    <input
+                      class="form-text"
+                      type="text"
+                      value="Title"
+                      id="title-post"
+                    />
+                  </div>
+                  <div class="pb-2"></div>
+                  <div class="row-md-8">
+                    <textarea class="form-control" rows="2" id="body-post">
+Enter your message...</textarea
+                    >
+                    <div class="pb-1"></div>
+                  </div>
+                  <div class="row-md-2">
+                    <button
+                      class="btn btn-small btn-primary float-end"
+                      id="post-btn"
+                    >
+                      Share
+                    </button>
+                    <div class="row-md-2"></div>
+                    <button
+                      class="btn btn-small btn-secondary float-end"
+                      id="filter-btn"
+                    >
+                      forest
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pb-5"></div>
+          <div class="pb-5"></div>
+        </section>
+        <section>
+          <div class="row">
+            <div class="col-md-2">
+              <div class="dropdown">
+                <button
+                  class="btn btn-primary dropdown-toggle"
+                  type="button"
+                  id="dropdownMenuButton"
+                  data-bs-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="true"
+                >
+                  Filter
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item" href="?filter=forest">forest</a>
+                  <a class="dropdown-item" href="?filter=ocean">ocean</a>
+                  <a class="dropdown-item" href="feed.html">reset filter</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6"></div>
+            <div class="col-md-4 float-end">
+              <div class="input-group mb-3">
+                <input
+                  type="text"
+                  id="search-q"
+                  class="form-control"
+                  aria-label="Sizing example input"
+                  aria-describedby="inputGroup-sizing-default"
+                />
+                <button class="btn-dark" id="search-btn">Search Posts</button>
+              </div>
+            </div>
+          </div>
+          <div class="pb-5"></div>
+        </section>
+        <section>
+          <div class="feedContainer"></div>
+        </section>
+      </div>
+    </main>
+    <script type="module" src="js/feed.js"></script>
+  </body>
+</html>
