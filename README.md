@@ -11,6 +11,10 @@ PUT/DELETE/GET/POST
    - npm run build
 3. Launch index.html with live server
 
+## TRELLO
+
+https://trello.com/invite/b/iCJmfpZQ/ATTId3416a27e612d9862a8af93bfc51a5d2935A1B19/javascript-2-noroff
+
 ## References:
 
 I used the official Bootstrap documentation found here:
